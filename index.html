@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Powerbuy Discount Check</title>
+    <title>Powerbuy Discount Smart Check</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,7 +18,7 @@
             margin: 0;
             display: flex;
             justify-content: center;
-            margin-top: 20px;
+            padding-top: 20px;
         }
 
         .container {
@@ -67,7 +67,7 @@
             margin-bottom: 15px;
         }
 
-        .prefix { width: 110px; font-size: 13px; color: #777; }
+        .prefix { width: 120px; font-size: 13px; color: #777; }
         
         .unit-label {
             margin-left: 8px;
@@ -87,7 +87,7 @@
         }
 
         input:focus { border-color: var(--pwb-orange); outline: none; }
-        input.point-input { border-left: 4px solid var(--pwb-purple); }
+        input.point-input { border-left: 5px solid var(--pwb-purple); background-color: #fcfaff; }
 
         .result-container {
             background-color: var(--pwb-light-orange);
@@ -112,13 +112,14 @@
 
         .point-hint {
             font-size: 12px;
-            color: #666;
+            color: var(--pwb-purple);
             margin-top: -12px;
             margin-bottom: 15px;
-            margin-left: 110px;
+            margin-left: 120px;
+            font-weight: bold;
         }
 
-        .net-pay-section { margin-top: 20px; text-align: right; }
+        .net-pay-section { margin-top: 25px; text-align: right; }
         .net-pay-amount { font-size: 42px; font-weight: 800; color: var(--pwb-orange); line-height: 1; }
 
         .footer {
@@ -137,52 +138,54 @@
             border: none;
             font-family: 'Kanit', sans-serif;
             flex: 1;
+            transition: 0.2s;
         }
 
         .btn-clear { background-color: #666; color: white; }
         .btn-copy { background-color: var(--pwb-purple); color: white; }
+        .btn:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <img src="https://i.ibb.co/sp4cx3Dn/image-bfe89e.png" alt="Logo" class="logo-img">
-        <div class="header-title">Powerbuy Discount Check</div>
+        <img src="https://i.ibb.co/sp4cx3Dn/image-bfe89e.png" alt="Power Buy Logo" class="logo-img">
+        <div class="header-title">Discount Smart Check</div>
     </div>
 
     <div class="main-layout">
         <div class="input-section">
             <label>ราคาป้ายสินค้า (MSRP)</label>
-            <div class="input-group"><span class="prefix">ยอดเงิน</span><input type="number" id="msrp" placeholder="0.00" oninput="vCalc(this)"><span class="unit-label">บาท</span></div>
+            <div class="input-group"><span class="prefix">ราคาเต็ม</span><input type="number" id="msrp" placeholder="0.00" oninput="vCalc(this)"><span class="unit-label">บาท</span></div>
             
-            <label>1. ส่วนลด Campaign</label>
-            <div class="input-group"><span class="prefix">หักทันที</span><input type="number" id="campaign" placeholder="0" oninput="vCalc(this)"><span class="unit-label">บาท</span></div>
+            <label>1. ส่วนลด PLPP/Campaign</label>
+            <div class="input-group"><span class="prefix">ลดทันที</span><input type="number" id="campaign" placeholder="0" oninput="vCalc(this)"><span class="unit-label">บาท</span></div>
 
-            <label>2. ส่วนลดสมาชิก The 1</label>
-            <div class="input-group"><span class="prefix">Member %</span><input type="number" id="member" placeholder="0" oninput="vCalc(this)"><span class="unit-label">%</span></div>
+            <label>2. ส่วนลด Member (The 1)</label>
+            <div class="input-group"><span class="prefix">สิทธิ์สมาชิก %</span><input type="number" id="member" placeholder="0" oninput="vCalc(this)"><span class="unit-label">%</span></div>
 
-            <label>3. แลกคะแนน The 1 (Point)</label>
-            <div class="input-group"><span class="prefix">ใช้คะแนน</span><input type="number" class="point-input" id="points" placeholder="0" oninput="vCalc(this)"><span class="unit-label">คะแนน</span></div>
+            <label>3. แลกคะแนน The 1 (Redeem)</label>
+            <div class="input-group"><span class="prefix">จำนวนคะแนน</span><input type="number" class="point-input" id="points" placeholder="0" oninput="vCalc(this)"><span class="unit-label">pts</span></div>
             <div class="point-hint" id="pointToMoney">(= ลดเพิ่ม 0.00 บาท)</div>
 
-            <label>4. ลดบัตรเครดิต</label>
-            <div class="input-group"><span class="prefix">On-top %</span><input type="number" id="bank" placeholder="0" oninput="vCalc(this)"><span class="unit-label">%</span></div>
+            <label>4. ส่วนลดบัตรเครดิต (On-top)</label>
+            <div class="input-group"><span class="prefix">ลดเพิ่ม %</span><input type="number" id="bank" placeholder="0" oninput="vCalc(this)"><span class="unit-label">%</span></div>
 
-            <label>5. คูปอง/อื่นๆ</label>
-            <div class="input-group"><span class="prefix">หักเพิ่ม</span><input type="number" id="coupon" placeholder="0" oninput="vCalc(this)"><span class="unit-label">บาท</span></div>
+            <label>5. คูปองส่วนลดอื่นๆ</label>
+            <div class="input-group"><span class="prefix">หักคูปอง</span><input type="number" id="coupon" placeholder="0" oninput="vCalc(this)"><span class="unit-label">บาท</span></div>
         </div>
 
         <div class="display-section">
             <div class="result-container">
                 <div class="result-line"><span>ราคาหลัง Campaign:</span><div class="val-wrap"><b id="r1">0.00</b><small>บาท</small></div></div>
-                <div class="result-line"><span>ลดจาก Member %:</span><div class="val-wrap"><span id="dMember" class="discount-val">0.00</span><small>บาท</small></div></div>
-                <div class="result-line"><span>ลดจากแลกคะแนน:</span><div class="val-wrap"><span id="dPoints" class="discount-val">0.00</span><small>บาท</small></div></div>
-                <div class="result-line"><span>ลดจากบัตรเครดิต:</span><div class="val-wrap"><span id="dBank" class="discount-val">0.00</span><small>บาท</small></div></div>
-                <div class="result-line"><span>ลดจากคูปอง:</span><div class="val-wrap"><span id="dCoupon" class="discount-val">0.00</span><small>บาท</small></div></div>
+                <div class="result-line"><span>ส่วนลดสมาชิก:</span><div class="val-wrap"><span id="dMember" class="discount-val">0.00</span><small>บาท</small></div></div>
+                <div class="result-line"><span>ส่วนลดจากการแลกคะแนน:</span><div class="val-wrap"><span id="dPoints" class="discount-val">0.00</span><small>บาท</small></div></div>
+                <div class="result-line"><span>ส่วนลดบัตรเครดิต:</span><div class="val-wrap"><span id="dBank" class="discount-val">0.00</span><small>บาท</small></div></div>
+                <div class="result-line"><span>ส่วนลดคูปอง:</span><div class="val-wrap"><span id="dCoupon" class="discount-val">0.00</span><small>บาท</small></div></div>
 
                 <div class="net-pay-section">
-                    <div style="font-size:13px; font-weight:bold;">ยอดสุทธิหน้า POS:</div>
+                    <div style="font-size:13px; font-weight:bold;">ยอดสุทธิที่ต้องชำระ (POS):</div>
                     <div class="net-pay-amount"><span id="netPay">0.00</span> <small style="font-size:18px; color:#333;">บาท</small></div>
                 </div>
             </div>
@@ -191,12 +194,12 @@
 
     <div class="footer">
         <button class="btn btn-copy" onclick="copySummary()">คัดลอกสรุปราคา</button>
-        <button class="btn btn-clear" onclick="resetAll()">ล้างข้อมูล</button>
+        <button class="btn btn-clear" onclick="resetAll()">ล้างข้อมูลใหม่</button>
     </div>
 </div>
 
 <script>
-    // บล็อกเครื่องหมายพิเศษ
+    // ป้องกันการใส่ค่าลบและตัวอักษรพิเศษ
     document.querySelectorAll('input').forEach(inp => {
         inp.addEventListener('keydown', e => { if(['-','+','e','E'].includes(e.key)) e.preventDefault(); });
     });
@@ -215,27 +218,27 @@
         const bankPer = parseFloat(document.getElementById('bank').value) || 0;
         const coupon = parseFloat(document.getElementById('coupon').value) || 0;
 
-        // 1. หลัง Campaign
+        // ขั้นที่ 1: หัก Campaign
         let afterC = Math.max(0, msrp - campaign);
         document.getElementById('r1').innerText = afterC.toLocaleString(undefined,{minimumFractionDigits:2});
 
-        // 2. ส่วนลด Member (%)
+        // ขั้นที่ 2: หักสิทธิ์สมาชิก %
         let dMember = afterC * (memberPer / 100);
         let afterM = Math.max(0, afterC - dMember);
         document.getElementById('dMember').innerText = "-" + dMember.toLocaleString(undefined,{minimumFractionDigits:2});
 
-        // 3. ส่วนลดแลกคะแนน (8 คะแนน = 1 บาท)
+        // ขั้นที่ 3: หักคะแนนแลก (8 คะแนน = 1 บาท)
         let dPointsVal = points / 8;
         let afterP = Math.max(0, afterM - dPointsVal);
         document.getElementById('dPoints').innerText = "-" + dPointsVal.toLocaleString(undefined,{minimumFractionDigits:2});
         document.getElementById('pointToMoney').innerText = `(= ลดเพิ่ม ${dPointsVal.toLocaleString(undefined,{minimumFractionDigits:2})} บาท)`;
 
-        // 4. ส่วนลดบัตรเครดิต (%)
+        // ขั้นที่ 4: หักบัตรเครดิต On-top %
         let dBank = afterP * (bankPer / 100);
         let afterB = Math.max(0, afterP - dBank);
         document.getElementById('dBank').innerText = "-" + dBank.toLocaleString(undefined,{minimumFractionDigits:2});
 
-        // 5. ส่วนลดคูปอง
+        // ขั้นที่ 5: หักคูปอง
         document.getElementById('dCoupon').innerText = "-" + coupon.toLocaleString(undefined,{minimumFractionDigits:2});
         
         // สรุปยอดสุทธิ
@@ -245,9 +248,9 @@
 
     function copySummary() {
         const net = document.getElementById('netPay').innerText;
-        if(net === "0.00") { alert("กรุณากรอกข้อมูล"); return; }
-        const text = `🛒 สรุปราคา Powerbuy\n------------------\nยอดสุทธิ: ${net} บาท\n------------------`;
-        navigator.clipboard.writeText(text).then(() => alert("คัดลอกสรุปราคาแล้ว!"));
+        if(net === "0.00") { alert("กรุณากรอกราคาสินค้า"); return; }
+        const text = `🛒 สรุปราคา Power Buy\nยอดสุทธิที่ต้องชำระ: ${net} บาท`;
+        navigator.clipboard.writeText(text).then(() => alert("คัดลอกข้อมูลเรียบร้อย!"));
     }
 
     function resetAll() {
