@@ -24,7 +24,7 @@
         .container {
             background-color: white;
             width: 100%;
-            max-width: 850px; 
+            max-width: 900px; 
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 8px 30px rgba(0,0,0,0.15);
@@ -65,17 +65,15 @@
             display: flex;
             align-items: center;
             margin-bottom: 15px;
-            position: relative;
         }
 
-        .input-group span.prefix { width: 100px; font-size: 13px; color: #777; }
+        .prefix { width: 110px; font-size: 13px; color: #777; }
         
-        /* สไตล์สำหรับหน่วยต่อท้ายในช่อง Input */
         .unit-label {
             margin-left: 8px;
             font-size: 13px;
             color: #999;
-            width: 45px;
+            width: 55px;
         }
 
         input {
@@ -89,42 +87,39 @@
         }
 
         input:focus { border-color: var(--pwb-orange); outline: none; }
-
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input.point-input { border-left: 4px solid var(--pwb-purple); }
 
         .result-container {
             background-color: var(--pwb-light-orange);
             border-left: 6px solid var(--pwb-purple);
             padding: 20px;
             border-radius: 8px;
+            height: fit-content;
         }
 
         .result-line {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
-            font-size: 15px;
+            margin-bottom: 8px;
+            font-size: 14px;
             border-bottom: 1px solid rgba(0,0,0,0.05);
-            padding-bottom: 5px;
+            padding-bottom: 4px;
         }
 
         .val-wrap { display: flex; align-items: baseline; gap: 4px; }
-
         .discount-val { color: var(--pwb-orange); font-weight: bold; }
 
-        .point-calc {
-            margin-top: 15px;
-            padding: 10px;
-            background: white;
-            border-radius: 6px;
-            border: 1px dashed var(--pwb-purple);
-            font-size: 14px;
+        .point-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: -12px;
+            margin-bottom: 15px;
+            margin-left: 110px;
         }
 
         .net-pay-section { margin-top: 20px; text-align: right; }
-        .net-pay-amount { font-size: 38px; font-weight: 800; color: var(--pwb-orange); }
+        .net-pay-amount { font-size: 42px; font-weight: 800; color: var(--pwb-orange); line-height: 1; }
 
         .footer {
             padding: 15px 25px;
@@ -142,12 +137,10 @@
             border: none;
             font-family: 'Kanit', sans-serif;
             flex: 1;
-            transition: 0.2s;
         }
 
         .btn-clear { background-color: #666; color: white; }
         .btn-copy { background-color: var(--pwb-purple); color: white; }
-        .btn:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
@@ -161,40 +154,32 @@
     <div class="main-layout">
         <div class="input-section">
             <label>ราคาป้ายสินค้า (MSRP)</label>
-            <div class="input-group"><span class="prefix">ยอดเงิน</span><input type="number" id="msrp" min="0" placeholder="0.00" oninput="vCalc(this)"><span class="unit-label">บาท</span></div>
+            <div class="input-group"><span class="prefix">ยอดเงิน</span><input type="number" id="msrp" placeholder="0.00" oninput="vCalc(this)"><span class="unit-label">บาท</span></div>
             
-            <label>1. ลด Campaign (บาท)</label>
-            <div class="input-group"><span class="prefix">หักทันที</span><input type="number" id="campaign" min="0" placeholder="0" oninput="vCalc(this)"><span class="unit-label">บาท</span></div>
+            <label>1. ส่วนลด Campaign</label>
+            <div class="input-group"><span class="prefix">หักทันที</span><input type="number" id="campaign" placeholder="0" oninput="vCalc(this)"><span class="unit-label">บาท</span></div>
 
-            <label>2. ลดสมาชิก The 1 (%)</label>
-            <div class="input-group"><span class="prefix">The 1 %</span><input type="number" id="member" min="0" max="100" placeholder="0" oninput="vCalc(this)"><span class="unit-label">%</span></div>
+            <label>2. ส่วนลดสมาชิก The 1</label>
+            <div class="input-group"><span class="prefix">Member %</span><input type="number" id="member" placeholder="0" oninput="vCalc(this)"><span class="unit-label">%</span></div>
 
-            <label>3. ลดบัตรเครดิต (%)</label>
-            <div class="input-group"><span class="prefix">On-top %</span><input type="number" id="bank" min="0" max="100" placeholder="0" oninput="vCalc(this)"><span class="unit-label">%</span></div>
+            <label>3. แลกคะแนน The 1 (Point)</label>
+            <div class="input-group"><span class="prefix">ใช้คะแนน</span><input type="number" class="point-input" id="points" placeholder="0" oninput="vCalc(this)"><span class="unit-label">คะแนน</span></div>
+            <div class="point-hint" id="pointToMoney">(= ลดเพิ่ม 0.00 บาท)</div>
 
-            <label>4. คูปอง/อื่นๆ (บาท)</label>
-            <div class="input-group"><span class="prefix">หักเพิ่ม</span><input type="number" id="coupon" min="0" placeholder="0" oninput="vCalc(this)"><span class="unit-label">บาท</span></div>
+            <label>4. ลดบัตรเครดิต</label>
+            <div class="input-group"><span class="prefix">On-top %</span><input type="number" id="bank" placeholder="0" oninput="vCalc(this)"><span class="unit-label">%</span></div>
+
+            <label>5. คูปอง/อื่นๆ</label>
+            <div class="input-group"><span class="prefix">หักเพิ่ม</span><input type="number" id="coupon" placeholder="0" oninput="vCalc(this)"><span class="unit-label">บาท</span></div>
         </div>
 
         <div class="display-section">
             <div class="result-container">
-                <div class="result-line">
-                    <span>ราคาหลัง Campaign:</span>
-                    <div class="val-wrap"><b id="r1">0.00</b><small>บาท</small></div>
-                </div>
-                <div class="result-line">
-                    <span>ส่วนลดสมาชิก:</span>
-                    <div class="val-wrap"><span id="d2" class="discount-val">0.00</span><small>บาท</small></div>
-                </div>
-                <div class="result-line">
-                    <span>ส่วนลดบัตร:</span>
-                    <div class="val-wrap"><span id="d3" class="discount-val">0.00</span><small>บาท</small></div>
-                </div>
-
-                <div class="point-calc">
-                    💡 <b>The 1 Point Check:</b><br>
-                    ใช้คะแนนลดสมาชิก: <span id="ptsUsed" style="color:var(--pwb-purple); font-weight:bold;">0</span> คะแนน
-                </div>
+                <div class="result-line"><span>ราคาหลัง Campaign:</span><div class="val-wrap"><b id="r1">0.00</b><small>บาท</small></div></div>
+                <div class="result-line"><span>ลดจาก Member %:</span><div class="val-wrap"><span id="dMember" class="discount-val">0.00</span><small>บาท</small></div></div>
+                <div class="result-line"><span>ลดจากแลกคะแนน:</span><div class="val-wrap"><span id="dPoints" class="discount-val">0.00</span><small>บาท</small></div></div>
+                <div class="result-line"><span>ลดจากบัตรเครดิต:</span><div class="val-wrap"><span id="dBank" class="discount-val">0.00</span><small>บาท</small></div></div>
+                <div class="result-line"><span>ลดจากคูปอง:</span><div class="val-wrap"><span id="dCoupon" class="discount-val">0.00</span><small>บาท</small></div></div>
 
                 <div class="net-pay-section">
                     <div style="font-size:13px; font-weight:bold;">ยอดสุทธิหน้า POS:</div>
@@ -205,13 +190,13 @@
     </div>
 
     <div class="footer">
-        <button class="btn btn-copy" onclick="copySummary()">คัดลอกสรุปราคา (ส่ง LINE)</button>
+        <button class="btn btn-copy" onclick="copySummary()">คัดลอกสรุปราคา</button>
         <button class="btn btn-clear" onclick="resetAll()">ล้างข้อมูล</button>
     </div>
 </div>
 
 <script>
-    // บล็อกคีย์ที่ไม่ใช่ตัวเลข (+, -, e)
+    // บล็อกเครื่องหมายพิเศษ
     document.querySelectorAll('input').forEach(inp => {
         inp.addEventListener('keydown', e => { if(['-','+','e','E'].includes(e.key)) e.preventDefault(); });
     });
@@ -226,35 +211,48 @@
         const msrp = parseFloat(document.getElementById('msrp').value) || 0;
         const campaign = parseFloat(document.getElementById('campaign').value) || 0;
         const memberPer = parseFloat(document.getElementById('member').value) || 0;
+        const points = parseFloat(document.getElementById('points').value) || 0;
         const bankPer = parseFloat(document.getElementById('bank').value) || 0;
         const coupon = parseFloat(document.getElementById('coupon').value) || 0;
 
+        // 1. หลัง Campaign
         let afterC = Math.max(0, msrp - campaign);
         document.getElementById('r1').innerText = afterC.toLocaleString(undefined,{minimumFractionDigits:2});
 
-        let dMem = afterC * (memberPer / 100);
-        let afterM = Math.max(0, afterC - dMem);
-        document.getElementById('d2').innerText = "-" + dMem.toLocaleString(undefined,{minimumFractionDigits:2});
-        document.getElementById('ptsUsed').innerText = Math.ceil(dMem * 8).toLocaleString();
+        // 2. ส่วนลด Member (%)
+        let dMember = afterC * (memberPer / 100);
+        let afterM = Math.max(0, afterC - dMember);
+        document.getElementById('dMember').innerText = "-" + dMember.toLocaleString(undefined,{minimumFractionDigits:2});
 
-        let dBank = afterM * (bankPer / 100);
-        let afterB = Math.max(0, afterM - dBank);
-        document.getElementById('d3').innerText = "-" + dBank.toLocaleString(undefined,{minimumFractionDigits:2});
+        // 3. ส่วนลดแลกคะแนน (8 คะแนน = 1 บาท)
+        let dPointsVal = points / 8;
+        let afterP = Math.max(0, afterM - dPointsVal);
+        document.getElementById('dPoints').innerText = "-" + dPointsVal.toLocaleString(undefined,{minimumFractionDigits:2});
+        document.getElementById('pointToMoney').innerText = `(= ลดเพิ่ม ${dPointsVal.toLocaleString(undefined,{minimumFractionDigits:2})} บาท)`;
 
+        // 4. ส่วนลดบัตรเครดิต (%)
+        let dBank = afterP * (bankPer / 100);
+        let afterB = Math.max(0, afterP - dBank);
+        document.getElementById('dBank').innerText = "-" + dBank.toLocaleString(undefined,{minimumFractionDigits:2});
+
+        // 5. ส่วนลดคูปอง
+        document.getElementById('dCoupon').innerText = "-" + coupon.toLocaleString(undefined,{minimumFractionDigits:2});
+        
+        // สรุปยอดสุทธิ
         let net = Math.max(0, afterB - coupon);
         document.getElementById('netPay').innerText = net.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2});
     }
 
     function copySummary() {
         const net = document.getElementById('netPay').innerText;
-        const pts = document.getElementById('ptsUsed').innerText;
         if(net === "0.00") { alert("กรุณากรอกข้อมูล"); return; }
-        const text = `🛒 สรุปราคา Powerbuy\nยอดสุทธิ: ${net} บาท\n(ใช้คะแนน The 1: ${pts} pts)`;
-        navigator.clipboard.writeText(text).then(() => alert("คัดลอกแล้ว!"));
+        const text = `🛒 สรุปราคา Powerbuy\n------------------\nยอดสุทธิ: ${net} บาท\n------------------`;
+        navigator.clipboard.writeText(text).then(() => alert("คัดลอกสรุปราคาแล้ว!"));
     }
 
     function resetAll() {
         document.querySelectorAll('input').forEach(i => i.value = '');
+        document.getElementById('pointToMoney').innerText = "(= ลดเพิ่ม 0.00 บาท)";
         calculate();
     }
 </script>
