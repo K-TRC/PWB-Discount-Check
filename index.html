@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Buy Discount Smart Check</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pwb-purple: #4b196b; 
+            --pwb-orange: #f37021; 
+            --pwb-light-orange: #fff4ed;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            /* แก้ไข: ขยับเนื้อหาลงมาหลบแถบฟ้าของ Google Apps Script */
+            margin-top: 65px !important; 
+        }
+
+        .container {
+            background-color: white;
+            width: 100%;
+            max-width: 850px; 
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .header {
+            background-color: var(--pwb-purple);
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            border-bottom: 6px solid var(--pwb-orange);
+        }
+
+        /* ส่วน Logo ที่ใช้ลิงก์ที่คุณส่งมา */
+        .logo-img {
+            height: 60px;
+            width: auto;
+            margin-right: 20px;
+            display: block;
+        }
+
+        .header-title {
+            color: white;
+            font-size: 26px;
+            font-weight: 500;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr; 
+            gap: 40px;
+            padding: 35px;
+        }
+
+        @media (max-width: 768px) {
+            .main-layout { grid-template-columns: 1fr; }
+        }
+
+        .input-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .input-group span {
+            width: 130px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 18px;
+            text-align: right;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        input:focus {
+            border-color: var(--pwb-orange);
+            outline: none;
+        }
+
+        .result-container {
+            background-color: var(--pwb-light-orange);
+            border-left: 6px solid var(--pwb-purple);
+            padding: 25px;
+            border-radius: 8px;
+            height: fit-content;
+        }
+
+        .result-title {
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .result-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding-bottom: 10px;
+        }
+
+        .discount-val {
+            color: var(--pwb-orange);
+            font-weight: bold;
+        }
+
+        .net-pay-section {
+            margin-top: 30px;
+            text-align: right;
+        }
+
+        .net-pay-label { font-size: 15px; color: #555; font-weight: bold; }
+
+        .net-pay-amount {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--pwb-orange);
+        }
+
+        .footer {
+            padding: 25px 35px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+
+        .btn-clear {
+            background-color: var(--pwb-purple);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <img src="https://i.ibb.co/sp4cx3Dn/image-bfe89e.png" alt="Power Buy Logo" class="logo-img">
+        <div class="header-title">Discount Smart Check</div>
+    </div>
+
+    <div class="main-layout">
+        <div class="input-section">
+            <label>ราคาป้ายสินค้า (MSRP)</label>
+            <div class="input-group">
+                <span>ยอดเงิน</span>
+                <input type="number" id="msrp" placeholder="0.00" oninput="calculate()">
+            </div>
+            
+            <label>1. ส่วนลด Campaign (บาท)</label>
+            <div class="input-group">
+                <span>หักทันที</span>
+                <input type="number" id="campaign" placeholder="0" oninput="calculate()">
+            </div>
+
+            <label>2. ส่วนลดสมาชิก The 1 (%)</label>
+            <div class="input-group">
+                <span>The 1 Card</span>
+                <input type="number" id="member" placeholder="0" oninput="calculate()">
+            </div>
+
+            <label>3. ส่วนลดบัตรเครดิต (%)</label>
+            <div class="input-group">
+                <span>On-top บัตร</span>
+                <input type="number" id="bank" placeholder="0" oninput="calculate()">
+            </div>
+
+            <label>4. ส่วนลดคูปองอื่นๆ (บาท)</label>
+            <div class="input-group">
+                <span>คูปอง/อื่นๆ</span>
+                <input type="number" id="coupon" placeholder="0" oninput="calculate()">
+            </div>
+        </div>
+
+        <div class="display-section">
+            <div class="result-container">
+                <div class="result-title">result container</div>
+                
+                <div class="result-line">
+                    <span>ราคาหลังหัก Campaign:</span>
+                    <b id="r1">0.00</b>
+                </div>
+                
+                <div class="result-line">
+                    <span>ส่วนลดสมาชิก:</span>
+                    <span id="d2" class="discount-val">0.00</span>
+                </div>
+                
+                <div class="result-line">
+                    <span>ส่วนลดบัตรเครดิต:</span>
+                    <span id="d3" class="discount-val">0.00</span>
+                </div>
+
+                <div class="net-pay-section">
+                    <div class="net-pay-label">ยอดสุทธิหน้า POS:</div>
+                    <div class="net-pay-amount"><span id="netPay">0.00</span> <small style="font-size: 20px; color: #333;">บาท</small></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <button class="btn-clear" onclick="resetAll()">ล้างข้อมูล - Clear All</button>
+    </div>
+</div>
+
+<script>
+    function calculate() {
+        const msrp = parseFloat(document.getElementById('msrp').value) || 0;
+        const campaign = parseFloat(document.getElementById('campaign').value) || 0;
+        const memberPer = parseFloat(document.getElementById('member').value) || 0;
+        const bankPer = parseFloat(document.getElementById('bank').value) || 0;
+        const coupon = parseFloat(document.getElementById('coupon').value) || 0;
+
+        let afterCampaign = msrp - campaign;
+        document.getElementById('r1').innerText = afterCampaign.toLocaleString(undefined, {minimumFractionDigits: 2});
+
+        let discMember = afterCampaign * (memberPer / 100);
+        let afterMember = afterCampaign - discMember;
+        document.getElementById('d2').innerText = "-" + discMember.toLocaleString(undefined, {minimumFractionDigits: 2});
+
+        let discBank = afterMember * (bankPer / 100);
+        let afterBank = afterMember - discBank;
+        document.getElementById('d3').innerText = "-" + discBank.toLocaleString(undefined, {minimumFractionDigits: 2});
+
+        let netPay = afterBank - coupon;
+        document.getElementById('netPay').innerText = netPay.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+
+    function resetAll() {
+        document.querySelectorAll('input').forEach(input => input.value = '');
+        calculate();
+    }
+</script>
+
+</body>
+</html>
