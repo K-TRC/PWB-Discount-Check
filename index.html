@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Power Buy Discount Check</title>
+    <title>Powerbuy Discount Check</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,8 +18,7 @@
             margin: 0;
             display: flex;
             justify-content: center;
-            /* แก้ไข: ขยับเนื้อหาลงมาหลบแถบฟ้าของ Google Apps Script */
-            margin-top: 65px !important; 
+            margin-top: 20px;
         }
 
         .container {
@@ -29,6 +28,7 @@
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            margin-bottom: 50px;
         }
 
         .header {
@@ -39,25 +39,14 @@
             border-bottom: 6px solid var(--pwb-orange);
         }
 
-        /* ส่วน Logo ที่ใช้ลิงก์ที่คุณส่งมา */
-        .logo-img {
-            height: 60px;
-            width: auto;
-            margin-right: 20px;
-            display: block;
-        }
-
-        .header-title {
-            color: white;
-            font-size: 26px;
-            font-weight: 500;
-        }
+        .logo-img { height: 60px; width: auto; margin-right: 20px; }
+        .header-title { color: white; font-size: 24px; font-weight: 500; }
 
         .main-layout {
             display: grid;
             grid-template-columns: 1.2fr 1fr; 
-            gap: 40px;
-            padding: 35px;
+            gap: 20px;
+            padding: 25px;
         }
 
         @media (max-width: 768px) {
@@ -66,8 +55,8 @@
 
         .input-section label {
             display: block;
-            margin-bottom: 10px;
-            font-size: 15px;
+            margin-bottom: 5px;
+            font-size: 14px;
             font-weight: 600;
             color: #333;
         }
@@ -75,160 +64,123 @@
         .input-group {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
-        .input-group span {
-            width: 130px;
-            font-size: 14px;
-            color: #777;
-        }
+        .input-group span { width: 100px; font-size: 13px; color: #777; }
 
         input {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             border: 1px solid #ddd;
             border-radius: 6px;
-            font-size: 18px;
+            font-size: 16px;
             text-align: right;
             font-family: 'Kanit', sans-serif;
         }
 
-        input:focus {
-            border-color: var(--pwb-orange);
-            outline: none;
-        }
+        input:focus { border-color: var(--pwb-orange); outline: none; }
 
         .result-container {
             background-color: var(--pwb-light-orange);
             border-left: 6px solid var(--pwb-purple);
-            padding: 25px;
+            padding: 20px;
             border-radius: 8px;
-            height: fit-content;
-        }
-
-        .result-title {
-            font-weight: bold;
-            font-size: 20px;
-            margin-bottom: 20px;
-            color: #333;
         }
 
         .result-line {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 15px;
-            font-size: 16px;
+            margin-bottom: 10px;
+            font-size: 15px;
             border-bottom: 1px solid rgba(0,0,0,0.05);
-            padding-bottom: 10px;
+            padding-bottom: 5px;
         }
 
-        .discount-val {
-            color: var(--pwb-orange);
-            font-weight: bold;
+        .discount-val { color: var(--pwb-orange); font-weight: bold; }
+
+        .point-calc {
+            margin-top: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border: 1px dashed var(--pwb-purple);
+            font-size: 14px;
         }
 
-        .net-pay-section {
-            margin-top: 30px;
-            text-align: right;
-        }
-
-        .net-pay-label { font-size: 15px; color: #555; font-weight: bold; }
-
-        .net-pay-amount {
-            font-size: 42px;
-            font-weight: 800;
-            color: var(--pwb-orange);
-        }
+        .net-pay-section { margin-top: 20px; text-align: right; }
+        .net-pay-amount { font-size: 38px; font-weight: 800; color: var(--pwb-orange); }
 
         .footer {
-            padding: 25px 35px;
+            padding: 15px 25px;
             background-color: #f9f9f9;
-            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
         }
 
-        .btn-clear {
-            background-color: var(--pwb-purple);
-            color: white;
-            border: none;
-            padding: 12px 30px;
+        .btn {
+            padding: 10px 20px;
             border-radius: 6px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
+            border: none;
+            font-family: 'Kanit', sans-serif;
+            flex: 1;
         }
+
+        .btn-clear { background-color: #666; color: white; }
+        .btn-copy { background-color: var(--pwb-purple); color: white; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <img src="https://i.ibb.co/sp4cx3Dn/image-bfe89e.png" alt="Power Buy Logo" class="logo-img">
-        <div class="header-title">PWB Discount Check</div>
+        <img src="https://i.ibb.co/sp4cx3Dn/image-bfe89e.png" alt="Logo" class="logo-img">
+        <div class="header-title">Powerbuy Discount Check</div>
     </div>
 
     <div class="main-layout">
         <div class="input-section">
             <label>ราคาป้ายสินค้า (MSRP)</label>
-            <div class="input-group">
-                <span>ยอดเงิน</span>
-                <input type="number" id="msrp" placeholder="0.00" oninput="calculate()">
-            </div>
+            <div class="input-group"><span>ยอดเงิน</span><input type="number" id="msrp" placeholder="0.00" oninput="calculate()"></div>
             
-            <label>1. ส่วนลด Campaign (บาท)</label>
-            <div class="input-group">
-                <span>หักทันที</span>
-                <input type="number" id="campaign" placeholder="0" oninput="calculate()">
-            </div>
+            <label>1. ลด Campaign (บาท)</label>
+            <div class="input-group"><span>หักทันที</span><input type="number" id="campaign" placeholder="0" oninput="calculate()"></div>
 
-            <label>2. ส่วนลดสมาชิก The 1 (%)</label>
-            <div class="input-group">
-                <span>The 1 Card</span>
-                <input type="number" id="member" placeholder="0" oninput="calculate()">
-            </div>
+            <label>2. ลดสมาชิก The 1 (%)</label>
+            <div class="input-group"><span>The 1 %</span><input type="number" id="member" placeholder="0" oninput="calculate()"></div>
 
-            <label>3. ส่วนลดบัตรเครดิต (%)</label>
-            <div class="input-group">
-                <span>On-top บัตร</span>
-                <input type="number" id="bank" placeholder="0" oninput="calculate()">
-            </div>
+            <label>3. ลดบัตรเครดิต (%)</label>
+            <div class="input-group"><span>On-top %</span><input type="number" id="bank" placeholder="0" oninput="calculate()"></div>
 
-            <label>4. ส่วนลดคูปองอื่นๆ (บาท)</label>
-            <div class="input-group">
-                <span>คูปอง/อื่นๆ</span>
-                <input type="number" id="coupon" placeholder="0" oninput="calculate()">
-            </div>
+            <label>4. คูปอง/อื่นๆ (บาท)</label>
+            <div class="input-group"><span>หักเพิ่ม</span><input type="number" id="coupon" placeholder="0" oninput="calculate()"></div>
         </div>
 
         <div class="display-section">
             <div class="result-container">
-                <div class="result-title">result container</div>
-                
-                <div class="result-line">
-                    <span>ราคาหลังหัก Campaign:</span>
-                    <b id="r1">0.00</b>
-                </div>
-                
-                <div class="result-line">
-                    <span>ส่วนลดสมาชิก:</span>
-                    <span id="d2" class="discount-val">0.00</span>
-                </div>
-                
-                <div class="result-line">
-                    <span>ส่วนลดบัตรเครดิต:</span>
-                    <span id="d3" class="discount-val">0.00</span>
+                <div class="result-line"><span>ราคาหลัง Campaign:</span><b id="r1">0.00</b></div>
+                <div class="result-line"><span>ส่วนลดสมาชิก:</span><span id="d2" class="discount-val">0.00</span></div>
+                <div class="result-line"><span>ส่วนลดบัตร:</span><span id="d3" class="discount-val">0.00</span></div>
+
+                <div class="point-calc">
+                    💡 <b>The 1 Point Check:</b><br>
+                    ใช้คะแนนลดสมาชิก: <span id="ptsUsed" style="color:var(--pwb-purple); font-weight:bold;">0</span> คะแนน
                 </div>
 
                 <div class="net-pay-section">
-                    <div class="net-pay-label">ยอดสุทธิหน้า POS:</div>
-                    <div class="net-pay-amount"><span id="netPay">0.00</span> <small style="font-size: 20px; color: #333;">บาท</small></div>
+                    <div style="font-size:13px; font-weight:bold;">ยอดสุทธิหน้า POS:</div>
+                    <div class="net-pay-amount"><span id="netPay">0.00</span> <small style="font-size:18px;">บาท</small></div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="footer">
-        <button class="btn-clear" onclick="resetAll()">ล้างข้อมูล - Clear All</button>
+        <button class="btn btn-copy" onclick="copySummary()">คัดลอกสรุปราคา (ส่ง LINE)</button>
+        <button class="btn btn-clear" onclick="resetAll()">ล้างข้อมูล</button>
     </div>
 </div>
 
@@ -247,6 +199,10 @@
         let afterMember = afterCampaign - discMember;
         document.getElementById('d2').innerText = "-" + discMember.toLocaleString(undefined, {minimumFractionDigits: 2});
 
+        // คำนวณคะแนน (8 คะแนน = 1 บาท)
+        let pts = Math.ceil(discMember * 8);
+        document.getElementById('ptsUsed').innerText = pts.toLocaleString();
+
         let discBank = afterMember * (bankPer / 100);
         let afterBank = afterMember - discBank;
         document.getElementById('d3').innerText = "-" + discBank.toLocaleString(undefined, {minimumFractionDigits: 2});
@@ -255,12 +211,20 @@
         document.getElementById('netPay').innerText = netPay.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
+    function copySummary() {
+        const net = document.getElementById('netPay').innerText;
+        const pts = document.getElementById('ptsUsed').innerText;
+        const text = `🛒 สรุปราคา Powerbuy\n------------------\nยอดสุทธิ: ${net} บาท\n(ใช้คะแนน The 1: ${pts} pts)\n------------------`;
+        
+        navigator.clipboard.writeText(text).then(() => {
+            alert("คัดลอกสรุปราคาเรียบร้อย! สามารถวางใน LINE ได้เลย");
+        });
+    }
+
     function resetAll() {
         document.querySelectorAll('input').forEach(input => input.value = '');
         calculate();
     }
 </script>
-
 </body>
 </html>
-
