@@ -67,7 +67,7 @@
             margin-bottom: 15px;
         }
 
-        .prefix { width: 120px; font-size: 13px; color: #777; }
+        .prefix { width: 125px; font-size: 13px; color: #777; }
         
         .unit-label {
             margin-left: 8px;
@@ -76,7 +76,7 @@
             width: 55px;
         }
 
-        input {
+        input, select {
             flex: 1;
             padding: 10px;
             border: 1px solid #ddd;
@@ -84,9 +84,12 @@
             font-size: 16px;
             text-align: right;
             font-family: 'Kanit', sans-serif;
+            background-color: white;
         }
 
-        input:focus { border-color: var(--pwb-orange); outline: none; }
+        select { text-align-last: right; padding-right: 10px; cursor: pointer; }
+
+        input:focus, select:focus { border-color: var(--pwb-orange); outline: none; }
         input.point-input { border-left: 5px solid var(--pwb-purple); background-color: #fcfaff; }
 
         .result-container {
@@ -115,7 +118,7 @@
             color: var(--pwb-purple);
             margin-top: -12px;
             margin-bottom: 15px;
-            margin-left: 120px;
+            margin-left: 125px;
             font-weight: bold;
         }
 
@@ -163,7 +166,15 @@
             <div class="input-group"><span class="prefix">ลดทันที</span><input type="number" id="campaign" placeholder="0" oninput="vCalc(this)"><span class="unit-label">บาท</span></div>
 
             <label>2. ส่วนลด Member (The 1)</label>
-            <div class="input-group"><span class="prefix">สิทธิ์สมาชิก %</span><input type="number" id="member" placeholder="0" oninput="vCalc(this)"><span class="unit-label">%</span></div>
+            <div class="input-group">
+                <span class="prefix">สิทธิ์สมาชิก</span>
+                <select id="member" onchange="vCalc(this)">
+                    <option value="0">ไม่เป็น Member (0%)</option>
+                    <option value="3">Central Card (3%)</option>
+                    <option value="5">The 1 Exclusive (5%)</option>
+                </select>
+                <span class="unit-label"></span>
+            </div>
 
             <label>3. แลกคะแนน The 1 (Redeem)</label>
             <div class="input-group"><span class="prefix">จำนวนคะแนน</span><input type="number" class="point-input" id="points" placeholder="0" oninput="vCalc(this)"><span class="unit-label">pts</span></div>
@@ -205,8 +216,8 @@
     });
 
     function vCalc(el) {
-        if (el.value < 0) el.value = 0;
-        if ((el.id==='member' || el.id==='bank') && el.value > 100) el.value = 100;
+        if (el.tagName === 'INPUT' && el.value < 0) el.value = 0;
+        if (el.id === 'bank' && el.value > 100) el.value = 100;
         calculate();
     }
 
@@ -222,18 +233,18 @@
         let afterC = Math.max(0, msrp - campaign);
         document.getElementById('r1').innerText = afterC.toLocaleString(undefined,{minimumFractionDigits:2});
 
-        // ขั้นที่ 2: หักสิทธิ์สมาชิก %
+        // ขั้นที่ 2: หักสิทธิ์สมาชิกจาก Dropdown
         let dMember = afterC * (memberPer / 100);
         let afterM = Math.max(0, afterC - dMember);
         document.getElementById('dMember').innerText = "-" + dMember.toLocaleString(undefined,{minimumFractionDigits:2});
 
-        // ขั้นที่ 3: หักคะแนนแลก (8 คะแนน = 1 บาท)
+        // ขั้นที่ 3: หักคะแนนแลก
         let dPointsVal = points / 8;
         let afterP = Math.max(0, afterM - dPointsVal);
         document.getElementById('dPoints').innerText = "-" + dPointsVal.toLocaleString(undefined,{minimumFractionDigits:2});
         document.getElementById('pointToMoney').innerText = `(= ลดเพิ่ม ${dPointsVal.toLocaleString(undefined,{minimumFractionDigits:2})} บาท)`;
 
-        // ขั้นที่ 4: หักบัตรเครดิต On-top %
+        // ขั้นที่ 4: หักบัตรเครดิต
         let dBank = afterP * (bankPer / 100);
         let afterB = Math.max(0, afterP - dBank);
         document.getElementById('dBank').innerText = "-" + dBank.toLocaleString(undefined,{minimumFractionDigits:2});
@@ -255,6 +266,7 @@
 
     function resetAll() {
         document.querySelectorAll('input').forEach(i => i.value = '');
+        document.getElementById('member').value = "0";
         document.getElementById('pointToMoney').innerText = "(= ลดเพิ่ม 0.00 บาท)";
         calculate();
     }
